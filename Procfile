@@ -1,1 +1,1 @@
-web: node mrpourquoi.js
+web: node instants.js
