@@ -1,0 +1,12 @@
+{
+    "name": "InstantsDeBonheur"
+  , "version": "0.1.0"
+  , "private": true
+  , "dependencies": {
+      "express": "2.5.0"
+    , "jade": "0.16.4"
+    , "mongoose": "2.3.9"
+    , "express-csrf": "0.3.3"
+  },
+  "engine": "node 0.4.12"
+}

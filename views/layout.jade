@@ -1,0 +1,30 @@
+!!!
+html(lang='fr')
+  head
+    title Instants de bonheur &raquo; #{title}
+    meta(charset='utf8')
+    meta(name='description', content='')
+    meta(name='author', content='Zeneffy Labs')
+    script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js')
+    link(rel='stylesheet', href='http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+
+    // if lt IE 9
+      script(src='http://html5shim.googlecode.com/svn/trunk/html5.js')
+  body
+    .topbar
+      .fill
+        .container
+          a(class='brand', href="/") Instants de bonheur
+          ul.nav
+            li
+              a(href="/question/list") Lire les instants de bonheur
+            li
+              a(href="/question") Partager un instant de bonheur
+    
+    .container!= body
+
+      footer
+        p Instants de bonheur est fièrement développé par <a href="http://labs.zeneffy.fr">Zeneffy Labs</a> et propulsé par <a href="http://nodejs.org/">Node.js</a>, <a href="http://expressjs.com/">Express</a> et <a href="http://www.mongodb.org/">MongoDB</a>. <a href="/about">Plus d'infos</a>
+        p &copy; J.Raigneau 2011
+

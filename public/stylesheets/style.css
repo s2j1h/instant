@@ -1,0 +1,21 @@
+body {
+  padding-top: 50px; /* 40px to make the container go all the way to the bottom of the topbar */
+}
+
+.topbar .btn {
+  border: 0;
+}
+
+.container > footer p {
+  text-align: center; /* center align it with the container */
+}
+
+h2.question {
+  border-top: 1px solid #DDD;
+}
+
+.label{
+  font-size: 20px;
+}
+
+

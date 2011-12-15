@@ -1,0 +1,35 @@
+if (flash.error != null)
+  .row
+    .span16
+      .alert-message.error
+        = flash.error
+else if (flash.success != null)
+  .row
+    .span16
+      .alert-message.success
+        = flash.success
+
+
+.hero-unit
+  h1 Bienvenue sur nos instants de bonheur
+  <br/>
+  p Avez vous déjà été pris par surprise ou resté sans réponse à un "Et pourquoi?" posé par vos enfants ? Avez-vous trouvé une façon amusante de répondre ?
+  p Partagez votre question au sein de la communcauté des parents malins et utiliser la réponse la plus créative, drôle pour enfin répondre à vos enfants !
+  <br/>
+  a(class= 'btn primary large', href= '/question') Poser une question &raquo;
+
+.row
+  .span8
+    h2 Dernières instants de bonheur
+    each question in questions
+      p <a href="/question/#{question._id}/show">#{question.body}</a>
+    p
+      a(class='btn',href='/question/list') Lire la suite &raquo;
+
+  .span8
+    h2 Derniers commentaires
+    each answer in answers
+      p <a href="/question/#{answer.value.question_id}/show">#{answer.value.answer_body}</a>
+    p
+      a(class='btn',href='/question/list') Lire la suite &raquo;
+

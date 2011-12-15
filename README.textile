@@ -1,0 +1,47 @@
+h1. MrPourquoi
+
+"MrPourquoi":http://mrpourquoi.eu/ est une application de questions/réponses à destination des parents.
+
+Avez vous déjà été pris par surprise ou resté sans réponse à un "Et pourquoi?" posé par vos enfants ? Avez-vous trouvé une façon amusante de répondre ?
+
+Partagez votre question au sein de la communcauté des parents malins et utiliser la réponse la plus créative, drôle pour enfin répondre à vos enfants !
+
+h2. Introduction
+
+Mr Pourquoi est un projet lancé par "jraigneau":http://blog.zeneffy.fr/ pour tester différentes technologies, notamment
+
+* Le serveur/framework "node.js":http://nodejs.org/ en javascript basé sur le moteur "V8":http://code.google.com/p/v8/
+* Le framework web "express":http://expressjs.com/ utilisant les mêmes idées que "sinatra":http://sinatrarb.com/
+* La base de donnée NoSQL "mongodb":http://mongodb.org/ via "mongoose":http://mongoosejs.com/
+* les fonctionnalités de "map/reduce":http://www.mongodb.org/display/DOCS/MapReduce#MapReduce-Overview de mongodb
+* Le moteur de template "jade":https://github.com/visionmedia/jade
+* le kit de démarrage css/javascript "bootstrap":http://twitter.github.com/bootstrap/ de Twitter
+* la génération de documentation via "docco":http://jashkenas.github.com/docco/
+* (à venir) La connexion à facebook via la librairie "everyauth":https://github.com/bnoguchi/everyauth
+
+h2. Communauté
+
+Une anomalie à reporter ? Une idée d'évolution ? Pourquoi ne pas vous connecter sur le "site communautaire de l'application":https://github.com/jraigneau/mrpourquoi/issues
+
+h2. Code
+
+Le dépôt de code est hébergé sur "GitHub":http://github.com/jraigneau/mrpourquoi
+
+h2. License
+
+"MrPourquoi":http://mrpourquoi.eu/ est sous "license apache v2.0":http://www.apache.org/licenses/LICENSE-2.0
+
+bc. Copyright 2011 Julien Raigneau
+
+bc. Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+bc. Unless required by applicable law or agreed to in writing, software distributed under the License 
+is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and limitations under the License.
+
+
+h2. Avertissement
+
+Le code est sans garantie et sans (trop) de support!

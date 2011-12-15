@@ -1,0 +1,40 @@
+.content
+  section
+
+    .row
+      - if (flash.error != null){
+        .span16
+          .alert-message.error
+            = flash.error
+      -} else if (flash.success != null){
+        .span16
+          .alert-message.success
+            = flash.success
+      -}
+      .hero-unit
+        .row
+          .span8
+            h3 Déjà <span class="label warning">#{questions.length}</span> questions, <span class="label important">#{answers}</span> réponses et  <span class="label success">#{votes}</span> votes - Pourquoi ne pas ajouter votre contribution, soit en répondant à un question ci-dessous soit en posant une nouvelle question ou encore en votant pour une question ou une réponse?
+          .span6
+            <br/>
+            <center><a class='btn primary large' href= '/question'> Poser une nouvelle question ?</a><br/><h2>ou</h3>
+            <a class='btn large' href= '/question/shuffle'> Répondre au hasard !</a></center>
+
+
+
+      each question in questions
+        .span16
+          h2.question <a href="/question/#{question._id}/show">#{question.body}</a>
+          - var reponse = 'avec ' + question.answers.length + ' réponses'
+
+          if(question.answers.length==0)
+            reponse = 'sans aucune réponse pour l\'instant'
+          else if(question.answers.length==1)
+            reponse = 'avec une seule réponse pour l\'instant'
+          - var vote = 'vote'
+          if(question.votes>0)
+            vote = vote+'s'
+          p <small>postée le #{question.date.getDate()}/#{question.date.getMonth()+1}/#{question.date.getFullYear()} par #{question.author} #{reponse} et #{question.votes} #{vote}.</small>
+      
+
+
