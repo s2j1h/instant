@@ -284,13 +284,13 @@ app.post('/question/:id/answer', function(req, res){
           req.flash('error', 'Holy guacamole! Nous sommes désolé mais nous n\'avons pas trouvé la question :( ');
           res.redirect('back');
       } else {                                             //La question existe - il est donc possible de répondre
-         if(req.body.answer.text==null || req.body.answer.text==''){//Vérification qu'un texte pour la réponse a bien été entré dans le formulaire
-            req.flash('error', 'Holy guacamole! Pour répondre à une question, il faut d\'abord remplir le champ correspondant ci-dessous !');
+         if(req.body.answer.text==null || req.body.answer.text=='' || req.body.answer.author=='' || req.body.answer.author==null ){//Vérification qu'un texte pour la réponse a bien été entré dans le formulaire
+            req.flash('error', 'Holy guacamole! Pour commenter un bonheur, il faut d\'abord remplir les champs ci-dessous !');
             res.redirect('back');
           } else {
           //Création d'un objet **Answer** et initialisation
           var answer = new Answer();
-          answer.author = "anonynme";
+          answer.author = req.body.answer.author;
           answer.date = new Date();
           answer.votes = 0;
           answer.body = req.body.answer.text;
@@ -346,7 +346,7 @@ app.get('/question/:id/show', function(req, res){
 // ###Affichage du formulaire pour créer une nouvelle question
 app.get('/question', function(req, res){
   res.render('question', {
-    title: 'Poser une question',
+    title: 'Partager un instant de bonheur',
     locals: {flash: req.flash()}
   });
 });
@@ -358,13 +358,13 @@ app.get('/question', function(req, res){
 app.post('/question', function(req, res){
 
   //console.log("req.body:" + req.body.question.text); 
-  if(req.body.question.text==null || req.body.question.text==''){
-    req.flash('error', 'Holy guacamole! Pour poser une question, il faut d\'abord remplir le champ correspondant ci-dessous !');
+  if(req.body.question.text==null || req.body.question.text=='' || req.body.question.author==null || req.body.question.author =='' ){
+    req.flash('error', 'Holy guacamole! Pour partager un bonheur, il faut d\'abord remplir tous les champs ci-dessous !');
     res.redirect('back');
   } else {
     //Création d'un objet **Question** et initialisation avec les données
     var question = new Question();
-    question.author = "anonynme";
+    question.author =  req.body.question.author;
     question.date = new Date();
     question.votes = 0;
     question.nb_answers = 0;
@@ -472,7 +472,7 @@ app.get('/question/list', function(req, res){
 // On utilise la fonctionnalité sendfile pour envoyer des pages statiques
 // A noter que pour se simplifier la vie, une route pour la feuille de style docco.css est prévue
 app.get('/about', function(req, res){ 
-  res.sendfile(__dirname + '/docs/mrpourquoi.html')
+  res.sendfile(__dirname + '/docs/instants.html')
 }); 
 
 app.get('/docco.css', function(req, res){ 

@@ -4,7 +4,7 @@ script
         $("#answer_button").click(function(event){
           event.preventDefault();
           $('#answer_form').show('fast');
-          $('#answer').focus();
+          $('#author').focus();
         });
     });
 
@@ -27,14 +27,14 @@ script
         h2= question.body
       .span4
         h5 par #{question.author}
-        p posée le #{question.date.getDate()}/#{question.date.getMonth()+1}/#{question.date.getFullYear()}
+        p partagée le #{question.date.getDate()}/#{question.date.getMonth()+1}/#{question.date.getFullYear()}
         - if(question.votes<1)
           p Aucun vote - <a href='/question/#{question._id}/vote'>Voter</a>
         - else if(question.votes<2)
           p Un vote - <a href='/question/#{question._id}/vote'>Voter</a>
         - else
           p #{question.votes} votes - <a href='/question/#{question._id}/vote'>Voter</a>
-        a(class= 'btn primary', href= '#', id='answer_button') Répondre
+        a(class= 'btn primary', href= '#', id='answer_button') Commenter
   <br/>
   <br/>
   section(id='answer_form', style='display:none')
@@ -43,33 +43,38 @@ script
         form(action="/question/#{question._id}/answer", method="post")
           .clearfix
             .input1
+              input(class='span12', name='answer[author]', id='author', style='margin-left:0px;font-size:14px;')
+          .clearfix
+            .input1
               textarea(class='span12', name='answer[text]', id='answer', rows='6', style='margin-left:0px;font-size:14px;')
           .clearfix
             <input type="hidden" name="csrf" value=#{csrf}>
 
           .actions
-            input(type='submit', class="btn primary", value="Répondre à la question !")
+            input(type='submit', class="btn primary", value="Commenter le bonheur !")
             &nbsp;
             button(type='reset', class='btn') Effacer
       .span4
-         p Rien de telle qu'une réponse créative, drôle, imaginative, futée, originale, inventive, insolite, maline, surprenante afin de maximiser le nombre de vote !
+        p N'oubliez pas de dire qui vous êtes !
+        <br/>
+        p Rien de telle qu'un commentaire créatif, drôle, imaginatif, futé, original, inventif, insolite, malin, surprenante afin de maximiser le nombre de vote !
 
 
 
   section
     .page-header
-      h3 Les réponses <small>classées par vote</small>
+      h3 Les commentaires <small>classés par vote</small>
     .row
       if(question.answers.length==0)
         .span16
-          p Aucune réponse pour l'instant - vite aidez nous à <a href="#">répondre</a> !
+          p Aucune commentaire pour l'instant - vite aidez nous à <a href="#">commenter</a> !
       else 
         each answer in question.answers
           .span12
             h4= answer.body
           .span4
             h5 par #{answer.author}
-            p répondue le #{answer.date.getDate()}/#{answer.date.getMonth()+1}/#{answer.date.getFullYear()}
+            p commenté le #{answer.date.getDate()}/#{answer.date.getMonth()+1}/#{answer.date.getFullYear()}
             - if(answer.votes<1)
               p Aucun vote - <a href='/question/#{question._id}/answer/#{answer._id}/vote'>Voter</a>
             - else if(answer.votes<2)
