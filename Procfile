@@ -1,1 +1,1 @@
-web: node instants.js
+web: node instant.js
