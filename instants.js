@@ -8,6 +8,7 @@
 var express = require('express');       //le framework web express
 var mongoose = require('mongoose');     //La librairie pour accéder à mongodb
 var csrf = require('express-csrf');     //la protection anti csrf
+var mailgun = require("mailgun");
 
 // Création de l'application express
 var app = module.exports = express.createServer();
@@ -71,7 +72,7 @@ app.configure('production', function(){
 var Schema = mongoose.Schema
   , ObjectId = Schema.ObjectId;
 
-// Le modèle des réponses **Answers** qui sera inclus dans chaque question (embedded document pour mongodb)
+// Le modèle des commentaires **Answers** qui sera inclus dans chaque bonheur (embedded document pour mongodb)
 // Le champ **author** est un index
 var Answers = new Schema({
     author    : { type: String, index:  true  }
@@ -90,8 +91,8 @@ var Questions = new Schema({
 });
 
 // Déclaration des modèles pour utilisation dans le code
-var Question = mongoose.model('Questions', Questions)
-var Answer = mongoose.model('Answers', Answers)
+var Question = mongoose.model('bonheurs', Questions)
+var Answer = mongoose.model('commentaires', Answers)
 
 
 // Début de la déclaration des Routes
@@ -145,7 +146,7 @@ app.get('/', function(req, res){
       //
       // Utilisation du mode replace pour remplacer les résultats à chaque nouvelle requète
       var command = {
-        mapreduce: "questions", 
+        mapreduce: "bonheurs", 
         map: mapFunction.toString(), 
         reduce: reduceFunction.toString(),
         out: {replace:"mr_list_answers"}
@@ -378,7 +379,7 @@ app.get('/bonheur/list', function(req, res){
       //
       // Utilisation du mode replace pour remplacer les résultats à chaque nouvelle requète
       var command = {
-        mapreduce: "questions", 
+        mapreduce: "bonheurs", 
         map: mapFunction.toString(), 
         reduce: reduceFunction.toString(),
         out: {replace: "mr_questions_answers"}
@@ -422,6 +423,16 @@ app.get('/bonheur/list', function(req, res){
         });
       }
     });
+});
+
+app.get('/abuse',function(req, res){
+  var mg = new mailgun.Mailgun('key-5x1d5i9ewratpmanjzn-rls35oikdtx8');
+  mg.sendText('abuse@instant-de-bonheur.fr',
+         'abuse@instant-de-bonheur.fr',
+         '[instant-de-bonheur] Abuse: un contenu a été signalé comme offensant',
+         function(err) { err && console.log(err) });
+  req.flash('info', 'Merci de nous avoir averti de ce contenu, nous allons le traiter dès que possible');
+  res.redirect('back');
 });
 
 // ###Permet d'accéder aux pages de la documentation 
