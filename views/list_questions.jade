@@ -13,16 +13,17 @@
       -}
       .hero-unit
         .row
-          .span8
-            h3 Déjà <span class="label warning">#{questions.length}</span> instants de bonheur, <span class="label important">#{answers}</span> commentaires et  <span class="label success">#{votes}</span> votes - Pourquoi ne pas ajouter votre contribution, soit en commentant à un bonheur ci-dessous soit en partant un nouvel instant ou encore en votant?
-          .span6
+          .span10
+            h3 Déjà <span class="label warning">#{questions.length}</span> instants de bonheur, <span class="label important">#{answers}</span> commentaires et  <span class="label success">#{votes}</span> votes. 
+            h3 Pourquoi ne pas ajouter votre contribution, soit en commentant un bonheur ci-dessous soit en partageant un nouvel instant ou encore en votant?
+          .span4
             <br/>
-            <center><a class='btn primary large' style="font-size:24px" href= '/question'> Partager un nouvel <br/>instant <br/>de bonheur ?</a></center>
+            <center><a class='btn primary large' style="font-size:24px" href= '/bonheur'>Partager un <br/>nouvel instant<br/>de bonheur ?</a></center>
 
 
       each question in questions
         .span16
-          h2.question <a href="/question/#{question._id}/show">#{question.body}</a>
+          h2.question <a href="/bonheur/#{question._id}/show">#{question.body}</a>
           - var reponse = 'avec ' + question.answers.length + ' commentaires'
 
           if(question.answers.length==0)
@@ -30,7 +31,7 @@
           else if(question.answers.length==1)
             reponse = 'avec un seul commentaire pour l\'instant'
           - var vote = 'vote'
-          if(question.votes>0)
+          if(question.votes>1)
             vote = vote+'s'
           p <small>partagé le #{question.date.getDate()}/#{question.date.getMonth()+1}/#{question.date.getFullYear()} par #{question.author} #{reponse} et #{question.votes} #{vote}.</small>
       

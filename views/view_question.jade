@@ -27,20 +27,20 @@ script
         h2= question.body
       .span4
         h5 par #{question.author}
-        p partagée le #{question.date.getDate()}/#{question.date.getMonth()+1}/#{question.date.getFullYear()}
+        p partagé le #{question.date.getDate()}/#{question.date.getMonth()+1}/#{question.date.getFullYear()}
         - if(question.votes<1)
-          p Aucun vote - <a href='/question/#{question._id}/vote'>Voter</a>
+          p Aucun vote - <a href='/bonheur/#{question._id}/vote'>Voter</a>
         - else if(question.votes<2)
-          p Un vote - <a href='/question/#{question._id}/vote'>Voter</a>
+          p Un vote - <a href='/bonheur/#{question._id}/vote'>Voter</a>
         - else
-          p #{question.votes} votes - <a href='/question/#{question._id}/vote'>Voter</a>
+          p #{question.votes} votes - <a href='/bonheur/#{question._id}/vote'>Voter</a>
         a(class= 'btn primary', href= '#', id='answer_button') Commenter
   <br/>
   <br/>
   section(id='answer_form', style='display:none')
     .row
       .span12
-        form(action="/question/#{question._id}/answer", method="post")
+        form(action="/bonheur/#{question._id}/commentaire", method="post")
           .clearfix
             .input1
               input(class='span12', name='answer[author]', id='author', style='margin-left:0px;font-size:14px;')
@@ -57,13 +57,13 @@ script
       .span4
         p N'oubliez pas de dire qui vous êtes !
         <br/>
-        p Rien de telle qu'un commentaire créatif, drôle, imaginatif, futé, original, inventif, insolite, malin, surprenante afin de maximiser le nombre de vote !
+        p Rien de tel qu'un commentaire créatif, drôle, imaginatif, futé, original, inventif, insolite, malin, surprenant pour donner du sens !
 
 
 
   section
     .page-header
-      h3 Les commentaires <small>classés par vote</small>
+      h3 Les commentaires
     .row
       if(question.answers.length==0)
         .span16
@@ -75,13 +75,6 @@ script
           .span4
             h5 par #{answer.author}
             p commenté le #{answer.date.getDate()}/#{answer.date.getMonth()+1}/#{answer.date.getFullYear()}
-            - if(answer.votes<1)
-              p Aucun vote - <a href='/question/#{question._id}/answer/#{answer._id}/vote'>Voter</a>
-            - else if(answer.votes<2)
-              p Un vote - <a href='/question/#{question._id}/answer/#{answer._id}/vote'>Voter</a>
-            - else
-              p #{answer.votes} votes - <a href='/question/#{question._id}/answer/#{answer._id}/vote'>Voter</a>
-    
 
 
 

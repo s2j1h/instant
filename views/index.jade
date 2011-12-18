@@ -14,22 +14,22 @@ else if (flash.success != null)
   h1 Bienvenue sur "instants de bonheur"
   <br/>
   p Avez vous envie de partager un moment de bonheur, un de ces instants où vous vous êtes sentis profondément heureux et apaisés ?
-  p Partagez votre bonheur au sein de la communauté des gens heureux malins et commentez ceux déjà donnés !
+  p Partagez votre bonheur au sein de la communauté des gens heureux et savourez ceux déjà donnés !
   <br/>
-  a(class= 'btn primary large', href= '/question') Partager un instant de bonheur &raquo;
+  a(class= 'btn primary large', href= '/bonheur') Partager un instant de bonheur &raquo;
 
 .row
   .span8
-    h2 Dernières instants de bonheur
+    h2 Derniers instants de bonheur
     each question in questions
-      p <a href="/question/#{question._id}/show">#{question.body}</a>
+      p <a href="/bonheur/#{question._id}/show">#{question.body}</a>
     p
-      a(class='btn',href='/question/list') Lire la suite &raquo;
+      a(class='btn',href='/bonheur/list') Lire la suite &raquo;
 
   .span8
     h2 Derniers commentaires
     each answer in answers
-      p <a href="/question/#{answer.value.question_id}/show">#{answer.value.answer_body}</a>
+      p <a href="/bonheur/#{answer.value.question_id}/show">#{answer.value.answer_body}</a>
     p
-      a(class='btn',href='/question/list') Lire la suite &raquo;
+      a(class='btn',href='/bonheur/list') Lire la suite &raquo;
 
