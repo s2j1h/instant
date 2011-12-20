@@ -168,7 +168,8 @@ app.get('/', function(req, res){
               res.redirect('back');
             } else {
               res.render('index', {          // on utilise le template index.jade
-              title: 'Accueil',             // Le titre (champ utilisé dans layout.jade)
+              title: 'Accueil',            // Le titre (champ utilisé dans layout.jade)
+              abuse: 'index',
               questions: doc,
               answers: mr_answers,
               locals: {flash: req.flash()}  // Pour s'assurer que les messages flash seront bien transmis
@@ -293,6 +294,7 @@ app.get('/bonheur/:id/show', function(req, res){
       } else {
           res.render('view_question', {             // Affichage de view_question.jade
             title: 'Un instant de bonheur et ses commentaires',
+            abuse: req.params.id,
             question: doc,                          // l'objet Question est envoyé dans le template pour utilisation des données
             locals: {flash: req.flash()}
           });
@@ -306,6 +308,7 @@ app.get('/bonheur/:id/show', function(req, res){
 app.get('/bonheur', function(req, res){
   res.render('question', {
     title: 'Partager un instant de bonheur',
+    abuse: '',
     locals: {flash: req.flash()}
   });
 });
@@ -330,7 +333,7 @@ app.post('/bonheur', function(req, res){
     question.body = req.body.question.text;
     question.save(function (err) { //Insertion de l'objet en base
       if(err == null) {
-        req.flash('info', 'Bien joué! Votre instant de bonheur a bien été partagé');
+        req.flash('success', 'Bien joué! Votre instant de bonheur a bien été partagé');
       } else {
         console.log("Error in POST /bonheur:" + err);
         req.flash('error', 'Bloody tzatziki! Une erreur est survenue et votre instant de bonheur n\'a pas été partagé. Pourquoi ne pas réessayer ?');
@@ -411,6 +414,7 @@ app.get('/bonheur/list', function(req, res){
 
               res.render('list_questions', {  //On affiche le template list_questions.jade
                 title: 'Les instants de bonheur',
+                abuse: 'liste_page1',
                 questions: doc,
                 answers: nb_answers,
                 votes: nb_votes,
@@ -425,13 +429,14 @@ app.get('/bonheur/list', function(req, res){
     });
 });
 
-app.get('/abuse',function(req, res){
+app.get('/abuse/:id',function(req, res){
   var mg = new mailgun.Mailgun('key-5x1d5i9ewratpmanjzn-rls35oikdtx8');
   mg.sendText('abuse@instant-de-bonheur.fr',
-         'abuse@instant-de-bonheur.fr',
+         'julien.raigneau+instant@gmail.com',
          '[instant-de-bonheur] Abuse: un contenu a été signalé comme offensant',
+         req.params.id,
          function(err) { err && console.log(err) });
-  req.flash('info', 'Merci de nous avoir averti de ce contenu, nous allons le traiter dès que possible');
+  req.flash('success', 'Merci de nous avoir averti de ce contenu, nous allons le traiter dès que possible');
   res.redirect('back');
 });
 
