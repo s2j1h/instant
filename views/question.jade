@@ -17,10 +17,10 @@
       form(action="/bonheur", method="post")
         .clearfix
           .input1
-            input(class='span12', name='question[author]', id='author', style='margin-left:0px;font-size:20px;') 
+            input(class='span12', name='bonheur[author]', id='author', style='margin-left:0px;font-size:20px;') 
         .clearfix
           .input1
-            textarea(class='span12', name='question[text]', id='question', rows='6', style='margin-left:0px;font-size:20px;', text='Mon instant de bonheur')
+            textarea(class='span12', name='bonheur[text]', id='question', rows='6', style='margin-left:0px;font-size:20px;', text='Mon instant de bonheur')
         .clearfix
           <input type="hidden" name="csrf" value=#{csrf}>
         .actions

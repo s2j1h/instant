@@ -26,7 +26,7 @@ html(lang='fr')
 
       footer
         p <b>Mon Instant de Bonheur</b> est fièrement développé par <a href="http://labs.zeneffy.fr">Zeneffy Labs</a> - &copy; J.Raigneau 2011
-        if(abuse.length >0)
+        if(abuse != undefined && abuse.length >0)
           p Un contenu offensant ou peu en rapport avec le site : <a href="/abuse/#{abuse}/">n'hésitez pas à le signaler</a>, nos modérateurs prendront soin de vérifier et éventuellement nettoyer.
 
     script

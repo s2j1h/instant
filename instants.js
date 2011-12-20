@@ -1,4 +1,5 @@
 // Mon Instant de bonheur est une application créée en 1 heure dans le cadre d'un séminaire.
+// Plus d'info sur https://github.com/jraigneau/instant
 
 
 // Configuration de l'application
@@ -72,27 +73,27 @@ app.configure('production', function(){
 var Schema = mongoose.Schema
   , ObjectId = Schema.ObjectId;
 
-// Le modèle des commentaires **Answers** qui sera inclus dans chaque bonheur (embedded document pour mongodb)
+// Le modèle des commentaires **Comments** qui sera inclus dans chaque bonheur (embedded document pour mongodb)
 // Le champ **author** est un index
-var Answers = new Schema({
+var Comments = new Schema({
     author    : { type: String, index:  true  }
   , body      : String
   , date      : Date
 });
 
 // Le modèle des questions **Question**, vous noterez la liste des réponses **answers** incluse
-var Questions = new Schema({
+var Bonheurs = new Schema({
     author    : { type: String, index:  true  }
   , body      : String
   , date      : Date
-  , nb_answers: Number // Nombre de réponses de la question -- utile pour les stats
-  , answers   : [Answers]
+  , nb_comments: Number // Nombre de commentaires -- utile pour les stats
+  , comments   : [Comments]
   , votes : Number
 });
 
 // Déclaration des modèles pour utilisation dans le code
-var Question = mongoose.model('bonheurs', Questions)
-var Answer = mongoose.model('commentaires', Answers)
+var Bonheur = mongoose.model('bonheurs', Bonheurs)
+var Comment = mongoose.model('commentaires', Comments)
 
 
 // Début de la déclaration des Routes
@@ -113,7 +114,7 @@ app.get('/500', function(req, res, next){
 
 // ###Index de MrPourquoi
 app.get('/', function(req, res){
-  Question.find({},[],{skip:0,limit:3, sort:{date : -1} },function (err, doc){      //Utilisation de la fonction find avec une limite de 5 questions
+  Bonheur.find({},[],{skip:0,limit:3, sort:{date : -1} },function (err, doc){      //Utilisation de la fonction find avec une limite de 5 questions
     if(err != null) {
       console.log("Error in GET /" + err);
       req.flash('error', 'Bloody tzatziki! Une erreur est survenue et la liste des instants de bonheur n\'a pas été trouvée dans la base. Pourquoi ne pas réessayer ?');
@@ -126,7 +127,7 @@ app.get('/', function(req, res){
       // Fonction de map qui renvoie la liste des réponses au question avec (id_question, answer_body, answer_date)
       mapFunction = function() {
         var question_id = this._id
-        this.answers.forEach(function(answer) {
+        this.comments.forEach(function(answer) {
           emit(answer._id, {answer_body: answer.body,answer_date: answer.date, question_id: question_id});
         });
       }; 
@@ -198,9 +199,9 @@ app.get('/bonheur/:id/vote', function(req, res){
     res.redirect('back');
   } else {
   
-    Question.findById(req.params.id, function (err, doc){     // Recherche de la question correspondant à l'id en base
+    Bonheur.findById(req.params.id, function (err, doc){     // Recherche de la question correspondant à l'id en base
       if(err != null) {                                       // Une erreur est survenue pendant la recherche en base
-        console.log("Error in GET /Question/:id/vote" + err); 
+        console.log("Error in GET /Bonheur/:id/vote" + err); 
         req.flash('error', 'Bloody tzatziki! Une erreur est survenue et votre instant de bonheur n\'a pas été trouvé dans la base. Pourquoi ne pas réessayer ?');
         res.redirect('back');
       } else if(doc == null) {                                // Aucune question ne correspond à l'id => envoi d'un message d'erreur
@@ -213,7 +214,7 @@ app.get('/bonheur/:id/vote', function(req, res){
             req.flash('success', 'Bravo! vous avez voté pour un instant de bonheur qui devient ainsi un peu plus populaire gràce à vous');
             res.redirect('back');
           } else {                                            // La sauvegarde a échoué - retour à la page précédente avec un message d'alerte
-            console.log("Error in GET /Question/:id/vote" + err);
+            console.log("Error in GET /Bonheur/:id/vote" + err);
             req.flash('error', 'Bloody tzatziki! Une erreur est survenue et votre vote n\'a pas été enregistré. Pourquoi ne pas réessayer ?');
             res.redirect('back');
           }
@@ -235,7 +236,7 @@ app.post('/bonheur/:id/commentaire', function(req, res){
     res.redirect('back');
   } else {
   
-    Question.findById(req.params.id, function (err, doc){  //Recherche de la question en base via l'id
+    Bonheur.findById(req.params.id, function (err, doc){  //Recherche de la question en base via l'id
       if(err != null) {
         console.log("Error in GET /bonheur/:id/answer" + err);
         req.flash('error', 'Bloody tzatziki! Une erreur est survenue et votre instant de bonheur n\'a pas été trouvé dans la base. Pourquoi ne pas réessayer ?');
@@ -244,18 +245,18 @@ app.post('/bonheur/:id/commentaire', function(req, res){
           req.flash('error', 'Holy guacamole! Nous sommes désolé mais nous n\'avons pas trouvé l\'instant :( ');
           res.redirect('back');
       } else {                                             //La question existe - il est donc possible de répondre
-         if(req.body.answer.text==null || req.body.answer.text=='' || req.body.answer.author=='' || req.body.answer.author==null ){//Vérification qu'un texte pour la réponse a bien été entré dans le formulaire
+         if(req.body.comment.text==null || req.body.comment.text=='' || req.body.comment.author=='' || req.body.comment.author==null ){//Vérification qu'un texte pour la réponse a bien été entré dans le formulaire
             req.flash('error', 'Holy guacamole! Pour commenter un bonheur, il faut d\'abord remplir les champs ci-dessous !');
             res.redirect('back');
           } else {
-          //Création d'un objet **Answer** et initialisation
-          var answer = new Answer();
-          answer.author = req.body.answer.author;
-          answer.date = new Date();
-          answer.votes = 0;
-          answer.body = req.body.answer.text;
-          doc.nb_answers = doc.nb_answers + 1;
-          doc.answers.push(answer); // On ajoute l'objet **Answer** dans la question via la méthode **push()**
+          //Création d'un objet **Comments** et initialisation
+          var comment = new Comment();
+          comment.author = req.body.comment.author;
+          comment.date = new Date();
+          comment.votes = 0;
+          comment.body = req.body.comment.text;
+          doc.nb_comments = doc.nb_comments + 1;
+          doc.comments.push(comment); // On ajoute l'objet **Comment** dans la question via la méthode **push()**
           doc.save(function (err) { // Sauvegarde de la question
             if(err == null) {
               req.flash('success', 'Merci ! vous avez partagé un commentaire sur un instant de bonheur avec nous - pourquoi ne pas lire et commenter d\'autres instants de bonheur ?');
@@ -283,7 +284,7 @@ app.get('/bonheur/:id/show', function(req, res){
     res.redirect('back');
   } else {
   
-    Question.findById(req.params.id, function (err, doc){
+    Bonheur.findById(req.params.id, function (err, doc){
       if(err != null) {
         console.log("Error in GET /bonheur/:id" + err);
         req.flash('error', 'Bloody tzatziki! Une erreur est survenue et votre instant de bonheur n\'a pas été trouvé dans la base. Pourquoi ne pas réessayer ?');
@@ -295,7 +296,7 @@ app.get('/bonheur/:id/show', function(req, res){
           res.render('view_question', {             // Affichage de view_question.jade
             title: 'Un instant de bonheur et ses commentaires',
             abuse: req.params.id,
-            question: doc,                          // l'objet Question est envoyé dans le template pour utilisation des données
+            question: doc,                          // l'objet Bonheur est envoyé dans le template pour utilisation des données
             locals: {flash: req.flash()}
           });
       }
@@ -320,18 +321,18 @@ app.get('/bonheur', function(req, res){
 app.post('/bonheur', function(req, res){
 
   //console.log("req.body:" + req.body.question.text); 
-  if(req.body.question.text==null || req.body.question.text=='' || req.body.question.author==null || req.body.question.author =='' ){
+  if(req.body.bonheur.text==null || req.body.bonheur.text=='' || req.body.bonheur.author==null || req.body.bonheur.author =='' ){
     req.flash('error', 'Holy guacamole! Pour partager un bonheur, il faut d\'abord remplir tous les champs ci-dessous !');
     res.redirect('back');
   } else {
-    //Création d'un objet **Question** et initialisation avec les données
-    var question = new Question();
-    question.author =  req.body.question.author;
-    question.date = new Date();
-    question.votes = 0;
-    question.nb_answers = 0;
-    question.body = req.body.question.text;
-    question.save(function (err) { //Insertion de l'objet en base
+    //Création d'un objet **Bonheur** et initialisation avec les données
+    var bonheur = new Bonheur();
+    bonheur.author =  req.body.bonheur.author;
+    bonheur.date = new Date();
+    bonheur.votes = 0;
+    bonheur.nb_comments = 0;
+    bonheur.body = req.body.bonheur.text;
+    bonheur.save(function (err) { //Insertion de l'objet en base
       if(err == null) {
         req.flash('success', 'Bien joué! Votre instant de bonheur a bien été partagé');
       } else {
@@ -340,7 +341,7 @@ app.post('/bonheur', function(req, res){
         res.redirect('back');
       }
     });
-    res.redirect('/bonheur/'+question._id+'/show');
+    res.redirect('/bonheur/'+bonheur._id+'/show');
   }
 });
 
@@ -351,7 +352,7 @@ app.post('/bonheur', function(req, res){
 app.get('/bonheur/list', function(req, res){
 
 
-  Question.find(function (err, doc){      //Utilisation de la fonction find sans critère => nous récupérons donc tous les éléments en base
+  Bonheur.find(function (err, doc){      //Utilisation de la fonction find sans critère => nous récupérons donc tous les éléments en base
     if(err != null) {
       console.log("Error in GET /bonheur/list" + err);
       req.flash('error', 'Bloody tzatziki! Une erreur est survenue et la liste des instants de bonheur n\'a pas été trouvée dans la base. Pourquoi ne pas réessayer ?');
@@ -364,7 +365,7 @@ app.get('/bonheur/list', function(req, res){
       // question, en utilisant une clé **answer_vote** qui sera commune pour faire l'aggrégation
       // totale
       mapFunction = function() {
-        emit("answer_vote", {answers: this.nb_answers, votes: this.votes});
+        emit("answer_vote", {answers: this.nb_comments, votes: this.votes});
       }; 
 
       // Fontion de reduce qui fait la somme du nbre de réponses/votes à partir des données émises
@@ -403,12 +404,12 @@ app.get('/bonheur/list', function(req, res){
               req.flash('error', 'Bloody tzatziki! Une erreur est survenue et la liste de bonheurs n\'a pas été trouvée dans la base. Pourquoi ne pas réessayer ?');
               res.redirect('back');
             } else {
-              var nb_answers = 0;
+              var nb_comments = 0;
               var nb_votes = 0;
               // Vérification qu'on a bien récupéer quelque chose qui se trouve à la position 0 de
               // l'array
               if(mr_answers.length>0) {
-                nb_answers = mr_answers[0].value.answers;
+                nb_comments = mr_answers[0].value.answers;
                 nb_votes = mr_answers[0].value.votes;
               }
 
@@ -416,7 +417,7 @@ app.get('/bonheur/list', function(req, res){
                 title: 'Les instants de bonheur',
                 abuse: 'liste_page1',
                 questions: doc,
-                answers: nb_answers,
+                answers: nb_comments,
                 votes: nb_votes,
                 locals: {flash: req.flash()}
               });

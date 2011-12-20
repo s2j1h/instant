@@ -6,6 +6,13 @@ script
           $('#answer_form').show('fast');
           $('#author').focus();
         });
+        // Button
+        $("#answer_link").click(function(event){
+          event.preventDefault();
+          $('#answer_form').show('fast');
+          $('#author').focus();
+        });
+
     });
 
 
@@ -43,10 +50,10 @@ script
         form(action="/bonheur/#{question._id}/commentaire", method="post")
           .clearfix
             .input1
-              input(class='span12', name='answer[author]', id='author', style='margin-left:0px;font-size:14px;')
+              input(class='span12', name='comment[author]', id='author', style='margin-left:0px;font-size:14px;')
           .clearfix
             .input1
-              textarea(class='span12', name='answer[text]', id='answer', rows='6', style='margin-left:0px;font-size:14px;')
+              textarea(class='span12', name='comment[text]', id='answer', rows='6', style='margin-left:0px;font-size:14px;')
           .clearfix
             <input type="hidden" name="csrf" value=#{csrf}>
 
@@ -65,11 +72,11 @@ script
     .page-header
       h3 Les commentaires
     .row
-      if(question.answers.length==0)
+      if(question.comments.length==0)
         .span16
-          p Aucune commentaire pour l'instant - vite aidez nous à <a href="#">commenter</a> !
+          p Aucune commentaire pour l'instant - vite aidez nous à <a href="#" id='answer_link'>commenter</a> !
       else 
-        each answer in question.answers
+        each answer in question.comments
           .span12
             h4= answer.body
           .span4
