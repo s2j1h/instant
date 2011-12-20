@@ -432,7 +432,7 @@ app.get('/bonheur/list', function(req, res){
 app.get('/abuse/:id',function(req, res){
   var mg = new mailgun.Mailgun('key-5x1d5i9ewratpmanjzn-rls35oikdtx8');
   mg.sendText('abuse@instant-de-bonheur.fr',
-         'julien.raigneau+instant@gmail.com',
+         process.env.email,
          '[instant-de-bonheur] Abuse: un contenu a été signalé comme offensant',
          req.params.id,
          function(err) { err && console.log(err) });

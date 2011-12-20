@@ -1,14 +1,17 @@
-h1. MrPourquoi
+h1. Mon Instant de Bonheur
 
-"MrPourquoi":http://mrpourquoi.eu/ est une application de questions/réponses à destination des parents.
+"Mon Instant de bonheur":http://mon.instant-de-bonheur/ est une application pour partager ses petits ou grands bonheurs.
 
-Avez vous déjà été pris par surprise ou resté sans réponse à un "Et pourquoi?" posé par vos enfants ? Avez-vous trouvé une façon amusante de répondre ?
+Avez vous envie de partager un moment de bonheur, un de ces instants où vous vous êtes sentis profondément heureux et apaisés ?
 
-Partagez votre question au sein de la communcauté des parents malins et utiliser la réponse la plus créative, drôle pour enfin répondre à vos enfants !
+Partagez votre bonheur au sein de la communauté des gens heureux et savourez ceux déjà donnés !
 
 h2. Introduction
 
-Mr Pourquoi est un projet lancé par "jraigneau":http://blog.zeneffy.fr/ pour tester différentes technologies, notamment
+"Mon Instant de bonheur":http://mon.instant-de-bonheur/  est un projet initié par "jraigneau":http://blog.zeneffy.fr/ lors d'une formation - dans le cadre de cette formation chaque participant devait montrer un de ses talents. Pour ma part, j'ai rapidement codé un prototype d'application: un talent comme un autre!
+
+
+Cette application, basée sur "MrPourquoi":https://github.com/jraigneau/mrpourquoi/ m'a permis de tester différentes technologies:
 
 * Le serveur/framework "node.js":http://nodejs.org/ en javascript basé sur le moteur "V8":http://code.google.com/p/v8/
 * Le framework web "express":http://expressjs.com/ utilisant les mêmes idées que "sinatra":http://sinatrarb.com/
@@ -17,19 +20,19 @@ Mr Pourquoi est un projet lancé par "jraigneau":http://blog.zeneffy.fr/ pour te
 * Le moteur de template "jade":https://github.com/visionmedia/jade
 * le kit de démarrage css/javascript "bootstrap":http://twitter.github.com/bootstrap/ de Twitter
 * la génération de documentation via "docco":http://jashkenas.github.com/docco/
-* (à venir) La connexion à facebook via la librairie "everyauth":https://github.com/bnoguchi/everyauth
+* L'envoi de mails via "railgun":http://mailgun.net/
 
 h2. Communauté
 
-Une anomalie à reporter ? Une idée d'évolution ? Pourquoi ne pas vous connecter sur le "site communautaire de l'application":https://github.com/jraigneau/mrpourquoi/issues
+Une anomalie à reporter ? Une idée d'évolution ? Pourquoi ne pas vous connecter sur le "site communautaire de l'application":https://github.com/jraigneau/instant/issues
 
 h2. Code
 
-Le dépôt de code est hébergé sur "GitHub":http://github.com/jraigneau/mrpourquoi
+Le dépôt de code est hébergé sur "GitHub":http://github.com/jraigneau/instant
 
 h2. License
 
-"MrPourquoi":http://mrpourquoi.eu/ est sous "license apache v2.0":http://www.apache.org/licenses/LICENSE-2.0
+"Mon Instant de bonheur":http://mon.instant-de-bonheur/ est sous "license apache v2.0":http://www.apache.org/licenses/LICENSE-2.0
 
 bc. Copyright 2011 Julien Raigneau
 
