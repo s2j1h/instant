@@ -1,5 +1,5 @@
 // Mon Instant de bonheur est une application créée en 1 heure dans le cadre d'un séminaire.
-// Plus d'info sur https://github.com/jraigneau/instant
+// Plus d'info sur [github.com/jraigneau/instant](https://github.com/jraigneau/instant)
 
 
 // Configuration de l'application
@@ -9,7 +9,7 @@
 var express = require('express');       //le framework web express
 var mongoose = require('mongoose');     //La librairie pour accéder à mongodb
 var csrf = require('express-csrf');     //la protection anti csrf
-var mailgun = require("mailgun");
+var mailgun = require("mailgun");       //la librairie pour envoyer des mails via mailgun
 
 // Création de l'application express
 var app = module.exports = express.createServer();
@@ -81,7 +81,7 @@ var Comments = new Schema({
   , date      : Date
 });
 
-// Le modèle des questions **Question**, vous noterez la liste des réponses **answers** incluse
+// Le modèle des bonheurs **Bonheurs**, vous noterez la liste des commentaires **comments** incluse
 var Bonheurs = new Schema({
     author    : { type: String, index:  true  }
   , body      : String
@@ -112,9 +112,9 @@ app.get('/500', function(req, res, next){
 });
 
 
-// ###Index de MrPourquoi
+// ###Index de l'application
 app.get('/', function(req, res){
-  Bonheur.find({},[],{skip:0,limit:3, sort:{date : -1} },function (err, doc){      //Utilisation de la fonction find avec une limite de 5 questions
+  Bonheur.find({},[],{skip:0,limit:3, sort:{date : -1} },function (err, doc){      //Utilisation de la fonction find avec une limite de 5 bonheurs
     if(err != null) {
       console.log("Error in GET /" + err);
       req.flash('error', 'Bloody tzatziki! Une erreur est survenue et la liste des instants de bonheur n\'a pas été trouvée dans la base. Pourquoi ne pas réessayer ?');
@@ -124,22 +124,22 @@ app.get('/', function(req, res){
       res.redirect('back');
     } else {
 
-      // Fonction de map qui renvoie la liste des réponses au question avec (id_question, answer_body, answer_date)
+      // Fonction de map qui renvoie la liste des commentaires au bonheur avec (id_bonheur, answer_body, answer_date)
       mapFunction = function() {
-        var question_id = this._id
-        this.comments.forEach(function(answer) {
-          emit(answer._id, {answer_body: answer.body,answer_date: answer.date, question_id: question_id});
+        var bonheur_id = this._id
+        this.comments.forEach(function(comment) {
+          emit(comment._id, {comment_body: comment.body,comment_date: comment.date, bonheur_id: bonheur_id});
         });
       }; 
 
-      // Fontion de reduce qui fait la somme du nbre de réponses/votes à partir des données émises
+      // Fontion de reduce qui fait la somme du nbre de commentaires/votes à partir des données émises
       // par la fonction de map, puis retourne un array de résultat
       reduceFunction = function(key, values) { //reduce function
-        var result = {answer_body: "", answer_date: 0, question_id: ""};
+        var result = {comment_body: "", comment_date: 0, bonheur_id: ""};
         values.forEach(function(value) {
-          result.answer_body = value.answer_body;
-          result.answer_date = value.answer_date;
-          result.question_id = value.question_id;
+          result.comment_body = value.comment_body;
+          result.comment_date = value.comment_date;
+          result.bonheur_id = value.bonheur_id;
         });
         return result;
       };
@@ -171,8 +171,8 @@ app.get('/', function(req, res){
               res.render('index', {          // on utilise le template index.jade
               title: 'Accueil',            // Le titre (champ utilisé dans layout.jade)
               abuse: 'index',
-              questions: doc,
-              answers: mr_answers,
+              bonheurs: doc,
+              comments: mr_answers,
               locals: {flash: req.flash()}  // Pour s'assurer que les messages flash seront bien transmis
               });
 
@@ -189,9 +189,9 @@ app.get('/', function(req, res){
 
 
 
-// ###Gestion du vote pour une question
+// ###Gestion du vote pour un bonheur 
 //
-// En entrée nous avons l'**id** de la question
+// En entrée nous avons l'**id** du bonheur
 app.get('/bonheur/:id/vote', function(req, res){
 
   if(req.params.id == null || req.params.id == ''){           // Vérification que l'id est bien dans la requête, sinon un message d'erreur
@@ -199,17 +199,17 @@ app.get('/bonheur/:id/vote', function(req, res){
     res.redirect('back');
   } else {
   
-    Bonheur.findById(req.params.id, function (err, doc){     // Recherche de la question correspondant à l'id en base
+    Bonheur.findById(req.params.id, function (err, doc){     // Recherche du bonheur correspondant à l'id en base
       if(err != null) {                                       // Une erreur est survenue pendant la recherche en base
         console.log("Error in GET /Bonheur/:id/vote" + err); 
         req.flash('error', 'Bloody tzatziki! Une erreur est survenue et votre instant de bonheur n\'a pas été trouvé dans la base. Pourquoi ne pas réessayer ?');
         res.redirect('back');
-      } else if(doc == null) {                                // Aucune question ne correspond à l'id => envoi d'un message d'erreur
+      } else if(doc == null) {                                // Aucun bonheur ne correspond à l'id => envoi d'un message d'erreur
           req.flash('error', 'Holy guacamole! Nous sommes désolé mais nous n\'avons pas trouvé l\'instant  :( ');
           res.redirect('back');
       } else {
-        doc.votes = doc.votes + 1;                            // On ajoute un vote supplémentaire à la question
-        doc.save(function (err) {                             // Sauvegarde de la question en base
+        doc.votes = doc.votes + 1;                            // On ajoute un vote supplémentaire au bonheur
+        doc.save(function (err) {                             // Sauvegarde du bonheur en base
           if(err == null) {                                   // Tout s'est bien passé: retour à la page précédente avec un message
             req.flash('success', 'Bravo! vous avez voté pour un instant de bonheur qui devient ainsi un peu plus populaire gràce à vous');
             res.redirect('back');
@@ -224,10 +224,10 @@ app.get('/bonheur/:id/vote', function(req, res){
   }
 });
 
-// ###Répondre à une question via un POST
+// ###Commenter un bonheur via un POST
 //
-// En entrée l'**id** de la question dans l'url et **req.body.answer.text** pour récupérer le texte
-// de la réponse dans le formulaire
+// En entrée l'**id** du bonheur dans l'url et **req.body.comment.text** pour récupérer le texte
+// du bonheur dans le formulaire
 
 app.post('/bonheur/:id/commentaire', function(req, res){
 
@@ -236,7 +236,7 @@ app.post('/bonheur/:id/commentaire', function(req, res){
     res.redirect('back');
   } else {
   
-    Bonheur.findById(req.params.id, function (err, doc){  //Recherche de la question en base via l'id
+    Bonheur.findById(req.params.id, function (err, doc){  //Recherche du bonheur en base via l'id
       if(err != null) {
         console.log("Error in GET /bonheur/:id/answer" + err);
         req.flash('error', 'Bloody tzatziki! Une erreur est survenue et votre instant de bonheur n\'a pas été trouvé dans la base. Pourquoi ne pas réessayer ?');
@@ -244,8 +244,8 @@ app.post('/bonheur/:id/commentaire', function(req, res){
       } else if(doc == null) {
           req.flash('error', 'Holy guacamole! Nous sommes désolé mais nous n\'avons pas trouvé l\'instant :( ');
           res.redirect('back');
-      } else {                                             //La question existe - il est donc possible de répondre
-         if(req.body.comment.text==null || req.body.comment.text=='' || req.body.comment.author=='' || req.body.comment.author==null ){//Vérification qu'un texte pour la réponse a bien été entré dans le formulaire
+      } else {                                             //Le bonheur existe - il est donc possible de commenter
+         if(req.body.comment.text==null || req.body.comment.text=='' || req.body.comment.author=='' || req.body.comment.author==null ){//Vérification qu'un texte pour le commetaire a bien été entré dans le formulaire
             req.flash('error', 'Holy guacamole! Pour commenter un bonheur, il faut d\'abord remplir les champs ci-dessous !');
             res.redirect('back');
           } else {
@@ -256,8 +256,8 @@ app.post('/bonheur/:id/commentaire', function(req, res){
           comment.votes = 0;
           comment.body = req.body.comment.text;
           doc.nb_comments = doc.nb_comments + 1;
-          doc.comments.push(comment); // On ajoute l'objet **Comment** dans la question via la méthode **push()**
-          doc.save(function (err) { // Sauvegarde de la question
+          doc.comments.push(comment); // On ajoute l'objet **Comment** dans le bonheur via la méthode **push()**
+          doc.save(function (err) { // Sauvegarde du bonheur
             if(err == null) {
               req.flash('success', 'Merci ! vous avez partagé un commentaire sur un instant de bonheur avec nous - pourquoi ne pas lire et commenter d\'autres instants de bonheur ?');
               res.redirect('back');
@@ -276,7 +276,7 @@ app.post('/bonheur/:id/commentaire', function(req, res){
 
 
 
-// ###Récupération des données d'une question via son **id**
+// ###Récupération des données d'un bonheur via son **id**
 app.get('/bonheur/:id/show', function(req, res){
 
   if(req.params.id == null || req.params.id == ''){
@@ -305,7 +305,7 @@ app.get('/bonheur/:id/show', function(req, res){
 });
 
 
-// ###Affichage du formulaire pour créer une nouvelle question
+// ###Affichage du formulaire pour créer un nouveau bonheur
 app.get('/bonheur', function(req, res){
   res.render('question', {
     title: 'Partager un instant de bonheur',
@@ -314,9 +314,9 @@ app.get('/bonheur', function(req, res){
   });
 });
 
-// ###Création d'une nouvelle question en base
+// ###Création d'un nouveau bonheur en base
 //
-//En entrée on a un formulaire contenant le texte de la question, récupérable via
+//En entrée on a un formulaire contenant le texte du bonheur, récupérable via
 //**req.body.question.text**
 app.post('/bonheur', function(req, res){
 
@@ -345,9 +345,9 @@ app.post('/bonheur', function(req, res){
   }
 });
 
-// ###Récupération de la liste de toutes les questions
+// ###Récupération de la liste de toutes les bonheurs
 //
-// Utilisation de mapreduce pour calculer le nbre de réponses/votes totaux basé sur [kylebanker.com](http://kylebanker.com/blog/2009/12/mongodb-map-reduce-basics/) et sur 
+// Utilisation de mapreduce pour calculer le nbre de commentaires/votes totaux basé sur [kylebanker.com](http://kylebanker.com/blog/2009/12/mongodb-map-reduce-basics/) et sur 
 // [wmilesn.com](http://wmilesn.com/2011/07/code/how-to-map-reduce-with-mongoose-mongodb-express-node-js/)
 app.get('/bonheur/list', function(req, res){
 
@@ -361,14 +361,14 @@ app.get('/bonheur/list', function(req, res){
       req.flash('error', 'Holy guacamole! Nous sommes désolé mais nous n\'avons pas trouvé d\'instant en base - pourquoi ne pas en rédiger un ? ');
       res.redirect('back');
     } else {
-      // Fonction de map qui renvoie le nbre de réponses et et le nombre de votes totaux par
+      // Fonction de map qui renvoie le nbre de commentaires et et le nombre de votes totaux par
       // question, en utilisant une clé **answer_vote** qui sera commune pour faire l'aggrégation
       // totale
       mapFunction = function() {
         emit("answer_vote", {answers: this.nb_comments, votes: this.votes});
       }; 
 
-      // Fontion de reduce qui fait la somme du nbre de réponses/votes à partir des données émises
+      // Fontion de reduce qui fait la somme du nbre de commentaires/votes à partir des données émises
       // par la fonction de map, puis retourne un array de résultat
       reduceFunction = function(key, values) { //reduce function
         var result = {answers: 0, votes: 0};
@@ -388,7 +388,7 @@ app.get('/bonheur/list', function(req, res){
         reduce: reduceFunction.toString(),
         out: {replace: "mr_questions_answers"}
       };
-      // Execution de la commande **map_reduce_cmd** de map/reduce pour récupérer le nombre total de réponse
+      // Execution de la commande **map_reduce_cmd** de map/reduce pour récupérer le nombre total de commentaires
       mongoose.connection.db.executeDbCommand(command, function(err, doc) {});
 
       // Récupération des résultats (commande spécifique à mongoose)

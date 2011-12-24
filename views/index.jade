@@ -21,15 +21,15 @@ else if (flash.success != null)
 .row
   .span8
     h2 Derniers instants de bonheur
-    each question in questions
-      p <a href="/bonheur/#{question._id}/show">#{question.body}</a>
+    each bonheur in bonheurs
+      p <a href="/bonheur/#{bonheur._id}/show">#{bonheur.body}</a>
     p
       a(class='btn',href='/bonheur/list') Lire la suite &raquo;
 
   .span8
     h2 Derniers commentaires
-    each answer in answers
-      p <a href="/bonheur/#{answer.value.question_id}/show">#{answer.value.answer_body}</a>
+    each comment in comments
+      p <a href="/bonheur/#{comment.value.bonheur_id}/show">#{comment.value.comment_body}</a>
     p
       a(class='btn',href='/bonheur/list') Lire la suite &raquo;
 
