@@ -124,7 +124,7 @@ app.get('/', function(req, res){
       res.redirect('back');
     } else {
 
-      // Fonction de map qui renvoie la liste des commentaires au bonheur avec (id_bonheur, answer_body, answer_date)
+      // Fonction de map qui renvoie la liste des commentaires au bonheur avec (id_bonheur, comment_body, comment_date)
       mapFunction = function() {
         var bonheur_id = this._id
         this.comments.forEach(function(comment) {
@@ -238,7 +238,7 @@ app.post('/bonheur/:id/commentaire', function(req, res){
   
     Bonheur.findById(req.params.id, function (err, doc){  //Recherche du bonheur en base via l'id
       if(err != null) {
-        console.log("Error in GET /bonheur/:id/answer" + err);
+        console.log("Error in GET /bonheur/:id/comment" + err);
         req.flash('error', 'Bloody tzatziki! Une erreur est survenue et votre instant de bonheur n\'a pas été trouvé dans la base. Pourquoi ne pas réessayer ?');
         res.redirect('back');
       } else if(doc == null) {
@@ -262,7 +262,7 @@ app.post('/bonheur/:id/commentaire', function(req, res){
               req.flash('success', 'Merci ! vous avez partagé un commentaire sur un instant de bonheur avec nous - pourquoi ne pas lire et commenter d\'autres instants de bonheur ?');
               res.redirect('back');
             } else {
-              console.log("Error inGET /bonheur/:id/answer" + err);
+              console.log("Error inGET /bonheur/:id/comment" + err);
               req.flash('error', 'Bloody tzatziki! Une erreur est survenue et votre commentaire n\'a pas été enregistré. Pourquoi ne pas réessayer ?');
               res.redirect('back');
             }
@@ -317,10 +317,10 @@ app.get('/bonheur', function(req, res){
 // ###Création d'un nouveau bonheur en base
 //
 //En entrée on a un formulaire contenant le texte du bonheur, récupérable via
-//**req.body.question.text**
+//**req.body.bonheur.text**
 app.post('/bonheur', function(req, res){
 
-  //console.log("req.body:" + req.body.question.text); 
+  //console.log("req.body:" + req.body.bonheur.text); 
   if(req.body.bonheur.text==null || req.body.bonheur.text=='' || req.body.bonheur.author==null || req.body.bonheur.author =='' ){
     req.flash('error', 'Holy guacamole! Pour partager un bonheur, il faut d\'abord remplir tous les champs ci-dessous !');
     res.redirect('back');
@@ -362,18 +362,18 @@ app.get('/bonheur/list', function(req, res){
       res.redirect('back');
     } else {
       // Fonction de map qui renvoie le nbre de commentaires et et le nombre de votes totaux par
-      // question, en utilisant une clé **answer_vote** qui sera commune pour faire l'aggrégation
+      // bonheur, en utilisant une clé **comment_vote** qui sera commune pour faire l'aggrégation
       // totale
       mapFunction = function() {
-        emit("answer_vote", {answers: this.nb_comments, votes: this.votes});
+        emit("comment_vote", {comments: this.nb_comments, votes: this.votes});
       }; 
 
       // Fontion de reduce qui fait la somme du nbre de commentaires/votes à partir des données émises
       // par la fonction de map, puis retourne un array de résultat
       reduceFunction = function(key, values) { //reduce function
-        var result = {answers: 0, votes: 0};
+        var result = {comments: 0, votes: 0};
         values.forEach(function(value) {
-          result.answers += value.answers;
+          result.comments += value.comments;
           result.votes += value.votes;
         });
         return result;
@@ -409,15 +409,15 @@ app.get('/bonheur/list', function(req, res){
               // Vérification qu'on a bien récupéer quelque chose qui se trouve à la position 0 de
               // l'array
               if(mr_answers.length>0) {
-                nb_comments = mr_answers[0].value.answers;
+                nb_comments = mr_answers[0].value.comments;
                 nb_votes = mr_answers[0].value.votes;
               }
 
               res.render('list_questions', {  //On affiche le template list_questions.jade
                 title: 'Les instants de bonheur',
                 abuse: 'liste_page1',
-                questions: doc,
-                answers: nb_comments,
+                bonheurs: doc,
+                comments: nb_comments,
                 votes: nb_votes,
                 locals: {flash: req.flash()}
               });
