@@ -39,6 +39,7 @@
   <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Utilisation de page 40x et 50x customisée (cf views/500.jade)</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
     <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;500&#39;</span><span class="p">,</span> <span class="p">{</span>
       <span class="nx">status</span><span class="o">:</span> <span class="nx">err</span><span class="p">.</span><span class="nx">status</span> <span class="o">||</span> <span class="mi">500</span>
+    <span class="p">,</span> <span class="nx">abuse</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
     <span class="p">,</span> <span class="nx">error</span><span class="o">:</span> <span class="nx">err</span>
     <span class="p">,</span> <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Erreur&quot;</span>
     <span class="p">});</span>
@@ -227,7 +228,7 @@ du bonheur dans le formulaire</p>             </td>             <td class="code"
           <span class="nx">req</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;Holy guacamole! Nous sommes désolé mais nous n\&#39;avons pas trouvé l\&#39;instant de bonheur  :( &#39;</span><span class="p">);</span>
           <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;back&#39;</span><span class="p">);</span>
       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;view_question&#39;</span><span class="p">,</span> <span class="p">{</span>             <span class="c1">// Affichage de view_question.jade</span>
+          <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;view_bonheur&#39;</span><span class="p">,</span> <span class="p">{</span>             <span class="c1">// Affichage de view_bonheur.jade</span>
             <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Un instant de bonheur et ses commentaires&#39;</span><span class="p">,</span>
             <span class="nx">abuse</span><span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
             <span class="nx">bonheur</span><span class="o">:</span> <span class="nx">doc</span><span class="p">,</span>                          <span class="c1">// l&#39;objet Bonheur est envoyé dans le template pour utilisation des données</span>
@@ -237,7 +238,7 @@ du bonheur dans le formulaire</p>             </td>             <td class="code"
     <span class="p">});</span>
   <span class="p">}</span>
 <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <h3>Affichage du formulaire pour créer un nouveau bonheur</h3>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/bonheur&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
-  <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;question&#39;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;bonheur&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Partager un instant de bonheur&#39;</span><span class="p">,</span>
     <span class="nx">abuse</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
     <span class="nx">locals</span><span class="o">:</span> <span class="p">{</span><span class="nx">flash</span><span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">flash</span><span class="p">()}</span>
@@ -318,7 +319,7 @@ l'array</p>             </td>             <td class="code">               <div c
                 <span class="nx">nb_votes</span> <span class="o">=</span> <span class="nx">mr_comments</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">value</span><span class="p">.</span><span class="nx">votes</span><span class="p">;</span>
               <span class="p">}</span>
 
-              <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;list_questions&#39;</span><span class="p">,</span> <span class="p">{</span>  <span class="c1">//On affiche le template list_questions.jade</span>
+              <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;list_bonheurs&#39;</span><span class="p">,</span> <span class="p">{</span>  <span class="c1">//On affiche le template list_bonheurs.jade</span>
                 <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Les instants de bonheur&#39;</span><span class="p">,</span>
                 <span class="nx">abuse</span><span class="o">:</span> <span class="s1">&#39;liste_page1&#39;</span><span class="p">,</span>
                 <span class="nx">bonheurs</span><span class="o">:</span> <span class="nx">doc</span><span class="p">,</span>
@@ -333,28 +334,30 @@ l'array</p>             </td>             <td class="code">               <div c
         <span class="p">});</span>
       <span class="p">}</span>
     <span class="p">});</span>
-<span class="p">});</span>
+<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-39">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-39">&#182;</a>               </div>               <h3>Permet d'envoyer un mail abuse via mailgun</h3>
 
-<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/abuse/:id&#39;</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
-  <span class="kd">var</span> <span class="nx">mg</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">mailgun</span><span class="p">.</span><span class="nx">Mailgun</span><span class="p">(</span><span class="s1">&#39;key-5x1d5i9ewratpmanjzn-rls35oikdtx8&#39;</span><span class="p">);</span>
-  <span class="nx">mg</span><span class="p">.</span><span class="nx">sendText</span><span class="p">(</span><span class="s1">&#39;abuse@instant-de-bonheur.fr&#39;</span><span class="p">,</span>
-         <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">email</span><span class="p">,</span>
+<p>Utilisation des variables d'environnement mailgun_key, emailFrom, emailTo</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/abuse/:id&#39;</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Sending an abuse mail for &quot;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">mg</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">mailgun</span><span class="p">.</span><span class="nx">Mailgun</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">mailgun_key</span><span class="p">);</span>
+  <span class="nx">mg</span><span class="p">.</span><span class="nx">sendText</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">emailFrom</span><span class="p">,</span>
+         <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">emailTo</span><span class="p">,</span>
          <span class="s1">&#39;[instant-de-bonheur] Abuse: un contenu a été signalé comme offensant&#39;</span><span class="p">,</span>
          <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
          <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span> <span class="nx">err</span> <span class="o">&amp;&amp;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">});</span>
   <span class="nx">req</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="s1">&#39;Merci de nous avoir averti de ce contenu, nous allons le traiter dès que possible&#39;</span><span class="p">);</span>
   <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;back&#39;</span><span class="p">);</span>
-<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-39">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-39">&#182;</a>               </div>               <h3>Permet d'accéder aux pages de la documentation</h3>
+<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-40">&#182;</a>               </div>               <h3>Permet d'accéder aux pages de la documentation</h3>
 
-<p>(les pages que vous lisez normalement!!)
-On utilise la fonctionnalité sendfile pour envoyer des pages statiques
+<p>(les pages que vous lisez normalement!!)</p>
+
+<p>On utilise la fonctionnalité sendfile pour envoyer des pages statiques
 A noter que pour se simplifier la vie, une route pour la feuille de style docco.css est prévue</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/about&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span> 
   <span class="nx">res</span><span class="p">.</span><span class="nx">sendfile</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/docs/instants.html&#39;</span><span class="p">)</span>
 <span class="p">});</span> 
 
 <span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/docco.css&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span> 
   <span class="nx">res</span><span class="p">.</span><span class="nx">sendfile</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/docs/docco.css&#39;</span><span class="p">)</span>
-<span class="p">});</span> </pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-40">&#182;</a>               </div>               <h3>Lancement de l'application</h3>
+<span class="p">});</span> </pre></div>             </td>           </tr>                               <tr id="section-41">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-41">&#182;</a>               </div>               <h3>Lancement de l'application</h3>
 
 <p>A noter l'utilisation de la variable <strong>process.env.PORT</strong> qui est nécessaire pour le
 fonctionnement chez Heroku.com</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">port</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">PORT</span> <span class="o">||</span> <span class="mi">3210</span><span class="p">;</span>

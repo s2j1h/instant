@@ -54,6 +54,7 @@ app.configure(function(){
   app.use(function(err, req, res, next){
     res.render('500', {
       status: err.status || 500
+    , abuse: ''
     , error: err
     , title: "Erreur"
     });
@@ -444,10 +445,13 @@ app.get('/bonheur/list', function(req, res){
 });
 
 // ###Permet d'envoyer un mail abuse via mailgun
+//
+// Utilisation des variables d'environnement mailgun_key, emailFrom, emailTo
 app.get('/abuse/:id',function(req, res){
-  var mg = new mailgun.Mailgun('key-5x1d5i9ewratpmanjzn-rls35oikdtx8');
-  mg.sendText('abuse@instant-de-bonheur.fr',
-         process.env.email,
+  console.log("Sending an abuse mail for " + req.params.id);
+  var mg = new mailgun.Mailgun(process.env.mailgun_key);
+  mg.sendText(process.env.emailFrom,
+         process.env.emailTo,
          '[instant-de-bonheur] Abuse: un contenu a été signalé comme offensant',
          req.params.id,
          function(err) { err && console.log(err) });
@@ -457,6 +461,7 @@ app.get('/abuse/:id',function(req, res){
 
 // ###Permet d'accéder aux pages de la documentation 
 // (les pages que vous lisez normalement!!)
+//
 // On utilise la fonctionnalité sendfile pour envoyer des pages statiques
 // A noter que pour se simplifier la vie, une route pour la feuille de style docco.css est prévue
 app.get('/about', function(req, res){ 
