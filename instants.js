@@ -1,7 +1,20 @@
-// Mon Instant de bonheur est une application créée en 1 heure dans le cadre d'un séminaire.
-// Plus d'info sur [github.com/jraigneau/instant](https://github.com/jraigneau/instant)
-
-
+// Mon Instant de bonheur est un projet initié par jraigneau lors d’une formation – dans le cadre de cette formation chaque participant devait montrer un de ses talents. Pour ma part, j’ai rapidement codé un prototype d’application: un talent comme un autre!
+//
+//Cette application, basée sur un autre projet ([MrPourquoi](https://github.com/jraigneau/mrpourquoi/)) m'a permis de tester différentes technologies:
+//
+//  - Le serveur/framework [node.js](http://nodejs.org) en javascript basé sur le moteur [V8](http://code.google.com/p/v8/)
+//  - Le framework web [express](http://expressjs.com) utilisant les mêmes idées que [sinatra](http://sinatrarb.com)
+//  - La base de donnée NoSQL [mongodb](http://mongodb.org) via [mongoose](http://mongoosejs.com/)
+//  - les fonctionnalités de [map/reduce](http://www.mongodb.org/display/DOCS/MapReduce#MapReduce-Overview) de mongodb
+//  - Le moteur de template [jade](https://github.com/visionmedia/jade)
+//  - le kit de démarrage css/javascript [bootstrap](http://twitter.github.com/bootstrap/) de Twitter
+//  - la génération de documentation (cette page!) via [docco](http://jashkenas.github.com/docco/)
+//  - L'envoi de mails via [railgun](http://mailgun.net/)
+//
+// Pour utiliser l'application, rendez-vous directement sur [mon.instant-de-bonheur.fr](http://mon.instant-de-bonheur.fr/)
+//
+// Pour étudier et/ou récupérer le code complet du projet, n'hésitez pas à vous connecter au dépôt Github [github.com/jraigneau/instant](https://github.com/jraigneau/instant)
+//
 // Configuration de l'application
 // ------------------------------
 
@@ -143,26 +156,26 @@ app.get('/', function(req, res){
         });
         return result;
       };
-      // Préparation de la commande qui sera envoyée à mongodb et stockée dans **mr_questions_answers**
+      // Préparation de la commande qui sera envoyée à mongodb et stockée dans **mr_list_comments**
       //
       // Utilisation du mode replace pour remplacer les résultats à chaque nouvelle requète
       var command = {
         mapreduce: "bonheurs", 
         map: mapFunction.toString(), 
         reduce: reduceFunction.toString(),
-        out: {replace:"mr_list_answers"}
+        out: {replace:"mr_list_comments"}
       };
       // Execution de la commande **map_reduce_cmd** de map/reduce pour récupérer le nombre total de réponse
       mongoose.connection.db.executeDbCommand(command, function(err, doc) {if(err !=null) { console.log("Error in GET /" + err);}});
       
       // Récupération des résultats (commande spécifique à mongoose)
-      mongoose.connection.db.collection('mr_list_answers', function(err, collection) { 
+      mongoose.connection.db.collection('mr_list_comments', function(err, collection) { 
         if(err != null) {
           console.log("Error in GET /" + err);
           req.flash('error', 'Bloody tzatziki! Une erreur est survenue et la liste d\'instants de bonheur n\'a pas été trouvée dans la base. Pourquoi ne pas réessayer ?');
           res.redirect('back');
         } else {
-          collection.find({},[],{skip:0,limit:3, sort:{_id : -1} }).toArray(function(err, mr_answers) { //tri par l'id: très laid mais pas trouvé encore d'autres solutions
+          collection.find({},[],{skip:0,limit:3, sort:{_id : -1} }).toArray(function(err, mr_comments) { //tri par l'id: très laid mais pas trouvé encore d'autres solutions
             if(err != null) {
               console.log("Error in GET /" + err);
               req.flash('error', 'Bloody tzatziki! Une erreur est survenue et la liste d\'instants de bonheur n\'a pas été trouvée dans la base. Pourquoi ne pas réessayer ?');
@@ -172,7 +185,7 @@ app.get('/', function(req, res){
               title: 'Accueil',            // Le titre (champ utilisé dans layout.jade)
               abuse: 'index',
               bonheurs: doc,
-              comments: mr_answers,
+              comments: mr_comments,
               locals: {flash: req.flash()}  // Pour s'assurer que les messages flash seront bien transmis
               });
 
@@ -293,10 +306,10 @@ app.get('/bonheur/:id/show', function(req, res){
           req.flash('error', 'Holy guacamole! Nous sommes désolé mais nous n\'avons pas trouvé l\'instant de bonheur  :( ');
           res.redirect('back');
       } else {
-          res.render('view_question', {             // Affichage de view_question.jade
+          res.render('view_bonheur', {             // Affichage de view_bonheur.jade
             title: 'Un instant de bonheur et ses commentaires',
             abuse: req.params.id,
-            question: doc,                          // l'objet Bonheur est envoyé dans le template pour utilisation des données
+            bonheur: doc,                          // l'objet Bonheur est envoyé dans le template pour utilisation des données
             locals: {flash: req.flash()}
           });
       }
@@ -307,7 +320,7 @@ app.get('/bonheur/:id/show', function(req, res){
 
 // ###Affichage du formulaire pour créer un nouveau bonheur
 app.get('/bonheur', function(req, res){
-  res.render('question', {
+  res.render('bonheur', {
     title: 'Partager un instant de bonheur',
     abuse: '',
     locals: {flash: req.flash()}
@@ -379,26 +392,26 @@ app.get('/bonheur/list', function(req, res){
         return result;
       };
       
-      // Préparation de la commande qui sera envoyée à mongodb et stockée dans **mr_questions_answers**
+      // Préparation de la commande qui sera envoyée à mongodb et stockée dans **mr_bonheurs_comments**
       //
       // Utilisation du mode replace pour remplacer les résultats à chaque nouvelle requète
       var command = {
         mapreduce: "bonheurs", 
         map: mapFunction.toString(), 
         reduce: reduceFunction.toString(),
-        out: {replace: "mr_questions_answers"}
+        out: {replace: "mr_bonheurs_comments"}
       };
       // Execution de la commande **map_reduce_cmd** de map/reduce pour récupérer le nombre total de commentaires
       mongoose.connection.db.executeDbCommand(command, function(err, doc) {});
 
       // Récupération des résultats (commande spécifique à mongoose)
-      mongoose.connection.db.collection('mr_questions_answers', function(err, collection) { 
+      mongoose.connection.db.collection('mr_bonheurs_comments', function(err, collection) { 
         if(err != null) {
           console.log("Error in GET /bonheur/list" + err);
           req.flash('error', 'Bloody tzatziki! Une erreur est survenue et la liste de bonheurs n\'a pas été trouvée dans la base. Pourquoi ne pas réessayer ?');
           res.redirect('back');
         } else {
-          collection.find({}).toArray(function(err, mr_answers) {
+          collection.find({}).toArray(function(err, mr_comments) {
             if(err != null) {
               console.log("Error in GET /bonheur/list" + err);
               req.flash('error', 'Bloody tzatziki! Une erreur est survenue et la liste de bonheurs n\'a pas été trouvée dans la base. Pourquoi ne pas réessayer ?');
@@ -408,12 +421,12 @@ app.get('/bonheur/list', function(req, res){
               var nb_votes = 0;
               // Vérification qu'on a bien récupéer quelque chose qui se trouve à la position 0 de
               // l'array
-              if(mr_answers.length>0) {
-                nb_comments = mr_answers[0].value.comments;
-                nb_votes = mr_answers[0].value.votes;
+              if(mr_comments.length>0) {
+                nb_comments = mr_comments[0].value.comments;
+                nb_votes = mr_comments[0].value.votes;
               }
 
-              res.render('list_questions', {  //On affiche le template list_questions.jade
+              res.render('list_bonheurs', {  //On affiche le template list_bonheurs.jade
                 title: 'Les instants de bonheur',
                 abuse: 'liste_page1',
                 bonheurs: doc,
@@ -430,6 +443,7 @@ app.get('/bonheur/list', function(req, res){
     });
 });
 
+// ###Permet d'envoyer un mail abuse via mailgun
 app.get('/abuse/:id',function(req, res){
   var mg = new mailgun.Mailgun('key-5x1d5i9ewratpmanjzn-rls35oikdtx8');
   mg.sendText('abuse@instant-de-bonheur.fr',
