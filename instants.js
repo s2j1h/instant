@@ -348,6 +348,13 @@ app.post('/bonheur', function(req, res){
     bonheur.body = req.body.bonheur.text;
     bonheur.save(function (err) { //Insertion de l'objet en base
       if(err == null) {
+         var mg = new mailgun.Mailgun(process.env.mailgun_key);
+         mg.sendText(process.env.emailFrom,
+         process.env.emailTo,
+         '[instant-de-bonheur] Nouveau contenu: un contenu a été ajouté',
+         "Auteur: " + bonheur.author +"\nBonheur: "+bonheur.body+"\nId: "+bonheur._id,
+         function(err) { err && console.log(err) });
+
         req.flash('success', 'Bien joué! Votre instant de bonheur a bien été partagé');
       } else {
         console.log("Error in POST /bonheur:" + err);
@@ -364,8 +371,6 @@ app.post('/bonheur', function(req, res){
 // Utilisation de mapreduce pour calculer le nbre de commentaires/votes totaux basé sur [kylebanker.com](http://kylebanker.com/blog/2009/12/mongodb-map-reduce-basics/) et sur 
 // [wmilesn.com](http://wmilesn.com/2011/07/code/how-to-map-reduce-with-mongoose-mongodb-express-node-js/)
 app.get('/bonheur/list', function(req, res){
-
-
   Bonheur.find(function (err, doc){      //Utilisation de la fonction find sans critère => nous récupérons donc tous les éléments en base
     if(err != null) {
       console.log("Error in GET /bonheur/list" + err);
