@@ -6,6 +6,7 @@ html(lang='fr')
     meta(name='description', content='')
     meta(name='author', content='Zeneffy Labs')
     script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js')
+    script(src='/javascripts/bootstrap-modal.js')
     link(rel='stylesheet', href='http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
 
@@ -27,7 +28,44 @@ html(lang='fr')
       footer
         p <b>Mon Instant de Bonheur</b> est fièrement développé par <a href="http://labs.zeneffy.fr">Zeneffy Labs</a> - &copy; J.Raigneau 2011 - <a href="/about">Plus d'infos</a>
         if(abuse != undefined && abuse.length >0)
-          p Un contenu offensant ou peu en rapport avec le site : <a href="/abuse/#{abuse}/">n'hésitez pas à le signaler</a>, nos modérateurs prendront soin de vérifier et éventuellement nettoyer.
+          p Un contenu offensant ou peu en rapport avec le site : <a href="#" id="abuse_link"> n'hésitez pas à le signaler</a>, nos modérateurs prendront soin de vérifier et éventuellement nettoyer.
+
+          
+      #modal-from-dom.modal.hide.fade
+        .modal-header
+          a(href="#", class="close")&times;
+          h3 Signaler un contenu offensant
+        .modal-body
+          form(action="/bonheur/commentaire", method="post")
+            .clearfix
+              label(for="author") Votre nom
+              .input
+                input(class="xlarge", name='comment[author]', id='author', size="30")
+            .clearfix
+              .input
+                textarea(name='comment[text]', id='answer', rows='6', size="30")
+            <input type="hidden" name="csrf" value=#{csrf}>
+            <input type="hidden" name="abuse" value=#{abuse}>
+         .modal-footer
+           a(href="#", class="btn primary") Envoyer
+           a(href="#", id="btn_close", class="btn secondary") Annuler
+
+
+    script
+      $(document).ready(function(){
+        // Button
+        $("#abuse_link").click(function(event){
+          event.preventDefault();
+          $('#modal-from-dom').modal('toggle')
+        });
+        $("#btn_close").click(function(event){
+          event.preventDefault();
+          $('#modal-from-dom').modal('toggle')
+        });
+
+      });
+
+
 
     script
       var _gaq = _gaq || [];
