@@ -453,14 +453,13 @@ app.get('/bonheur/list', function(req, res){
 //
 // Utilisation des variables d'environnement mailgun_key, emailFrom, emailTo
 app.post('/abuse',function(req, res){
-  
   var author = req.body.abuse.author;
   var txt = req.body.abuse.text;
   var id =  req.body.abuse.id;
   var body = "Auteur: " + author + "\nTexte: " + txt + "\nId élément: " + id;
   var url = "http://mon.instant-de-bonheur.fr/" 
   if (id != "index" && id != "liste_page1") {
-    url = url + id +"/show";
+    url = url + "bonheur/" + id +"/show";
   }
   body = body + "\n" + url;
 
