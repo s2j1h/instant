@@ -452,13 +452,23 @@ app.get('/bonheur/list', function(req, res){
 // ###Permet d'envoyer un mail abuse via mailgun
 //
 // Utilisation des variables d'environnement mailgun_key, emailFrom, emailTo
-app.get('/abuse/:id',function(req, res){
-  console.log("Sending an abuse mail for " + req.params.id);
+app.post('/abuse',function(req, res){
+  
+  var author = req.body.abuse.author;
+  var txt = req.body.abuse.text;
+  var id =  req.body.abuse.id;
+  var body = "Auteur: " + author + "\nTexte: " + txt + "\nId élément: " + id;
+  var url = "http://mon.instant-de-bonheur.fr/" 
+  if (id != "index" && id != "liste_page1") {
+    url = url + id +"/show";
+  }
+  body = body + "\n" + url;
+
   var mg = new mailgun.Mailgun(process.env.mailgun_key);
   mg.sendText(process.env.emailFrom,
          process.env.emailTo,
          '[instant-de-bonheur] Abuse: un contenu a été signalé comme offensant',
-         req.params.id,
+         body,
          function(err) { err && console.log(err) });
   req.flash('success', 'Merci de nous avoir averti de ce contenu, nous allons le traiter dès que possible');
   res.redirect('back');
