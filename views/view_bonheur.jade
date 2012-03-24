@@ -55,6 +55,10 @@ script
             .input1
               textarea(class='span12', name='comment[text]', id='answer', rows='6', style='margin-left:0px;font-size:14px;')
           .clearfix
+            .input1
+              input(class='span12', name='comment[captcha]', id='captcha', style='margin-left:0px;font-size:14px;') 
+
+          .clearfix
             <input type="hidden" name="csrf" value=#{csrf}>
 
           .actions
@@ -65,7 +69,8 @@ script
         p N'oubliez pas de dire qui vous êtes !
         <br/>
         p Rien de tel qu'un commentaire créatif, drôle, imaginatif, futé, original, inventif, insolite, malin, surprenant pour donner du sens !
-
+        <br/><br/><br/>
+        p Pour éviter les robots, combien font 3+3 ?
 
 
   section

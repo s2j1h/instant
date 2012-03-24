@@ -8,6 +8,7 @@
     , "mongoose": "2.3.9"
     , "express-csrf": "0.3.3"
     , "mailgun":"0.4.2"
+    , "captcha":"0.0.1"
   },
   "engine": "node 0.4.12"
 }

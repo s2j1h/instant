@@ -13,6 +13,8 @@
       <br/><br/>
       p Quels sont les circonstances, les lieux, les situations, les images qui vous viennent ? 
       p Qu'avez-vous ressenti ?
+      p Qu'est ce qui en fait un moment particulier ?
+      p Pour éviter les robots, combien font 2+2 ?
     .span12
       form(action="/bonheur", method="post")
         .clearfix
@@ -20,7 +22,10 @@
             input(class='span12', name='bonheur[author]', id='author', style='margin-left:0px;font-size:20px;') 
         .clearfix
           .input1
-            textarea(class='span12', name='bonheur[text]', id='question', rows='6', style='margin-left:0px;font-size:20px;', text='Mon instant de bonheur')
+            textarea(class='span12', name='bonheur[text]', id='question', rows='7', style='margin-left:0px;font-size:20px;', text='Mon instant de bonheur')
+        .clearfix
+          .input1
+            input(class='span12', name='bonheur[captcha]', id='captcha', style='margin-left:0px;font-size:20px;') 
         .clearfix
           <input type="hidden" name="csrf" value=#{csrf}>
         .actions

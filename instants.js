@@ -40,7 +40,8 @@ app.configure(function(){
   app.set('view engine', 'jade');                               // Le moteur de template - Jade
   app.use(express.favicon());                                   // un favicon automatique (pour éviter des erreurs 404 systématiques dans les logs)
   app.use(express.bodyParser());                                // Pour gérer les formulaires
-  app.use(express.cookieParser());                              // Pour la gestion des cookies et des sessions
+  app.use(express.cookieParser());  
+                              // Pour la gestion des cookies et des sessions
   app.use(express.session({ secret: 'awfjepyionn14962wxcv' })); // clé d'encodage pour les cookies et les sessions
   app.use(express.methodOverride());                            // middleware pour la gestion des actions http (post/get/put/delete)
   app.use(app.router);                                          // Routage des urls
@@ -259,7 +260,7 @@ app.post('/bonheur/:id/commentaire', function(req, res){
           req.flash('error', 'Holy guacamole! Nous sommes désolé mais nous n\'avons pas trouvé l\'instant :( ');
           res.redirect('back');
       } else {                                             //Le bonheur existe - il est donc possible de commenter
-         if(req.body.comment.text==null || req.body.comment.text=='' || req.body.comment.author=='' || req.body.comment.author==null ){//Vérification qu'un texte pour le commetaire a bien été entré dans le formulaire
+         if(req.body.comment.text==null || req.body.comment.text=='' || req.body.comment.author=='' || req.body.comment.author==null || req.body.comment.captcha==null || req.body.comment.captcha != '6' ){//Vérification qu'un texte pour le commetaire a bien été entré dans le formulaire
             req.flash('error', 'Holy guacamole! Pour commenter un bonheur, il faut d\'abord remplir les champs ci-dessous !');
             res.redirect('back');
           } else {
@@ -273,6 +274,12 @@ app.post('/bonheur/:id/commentaire', function(req, res){
           doc.comments.push(comment); // On ajoute l'objet **Comment** dans le bonheur via la méthode **push()**
           doc.save(function (err) { // Sauvegarde du bonheur
             if(err == null) {
+              var mg = new mailgun.Mailgun(process.env.mailgun_key);
+              mg.sendText(process.env.emailFrom,
+              process.env.emailTo,
+              '[instant-de-bonheur] Nouveau contenu: un commentaire a été ajouté',
+              "Auteur: " + comment.author +"\nBonheur: "+comment.body+"\nId: "+comment._id,
+              function(err) { err && console.log(err) });
               req.flash('success', 'Merci ! vous avez partagé un commentaire sur un instant de bonheur avec nous - pourquoi ne pas lire et commenter d\'autres instants de bonheur ?');
               res.redirect('back');
             } else {
@@ -335,7 +342,7 @@ app.get('/bonheur', function(req, res){
 app.post('/bonheur', function(req, res){
 
   //console.log("req.body:" + req.body.bonheur.text); 
-  if(req.body.bonheur.text==null || req.body.bonheur.text=='' || req.body.bonheur.author==null || req.body.bonheur.author =='' ){
+  if(req.body.bonheur.text==null || req.body.bonheur.text=='' || req.body.bonheur.author==null || req.body.bonheur.author =='' || req.body.bonheur.captcha==null || req.body.bonheur.captcha != '4'){
     req.flash('error', 'Holy guacamole! Pour partager un bonheur, il faut d\'abord remplir tous les champs ci-dessous !');
     res.redirect('back');
   } else {
