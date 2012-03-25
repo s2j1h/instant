@@ -45,6 +45,10 @@ html(lang='fr')
               label(for="text") Problème rencontré:
               .input
                 textarea(name='abuse[text]', id='text', rows='6', style="width:270px;")
+            .clearfix
+              label(for="captcha") Anti Robot: 5+5 = ?
+              .input
+                input(class='xlarge', name='abuse[captcha]', id='captcha') 
             <input type="hidden" name="csrf" value=#{csrf}>
             <input type="hidden" name="abuse[id]" value=#{abuse}>
          .modal-footer

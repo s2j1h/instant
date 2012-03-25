@@ -460,24 +460,29 @@ app.get('/bonheur/list', function(req, res){
 //
 // Utilisation des variables d'environnement mailgun_key, emailFrom, emailTo
 app.post('/abuse',function(req, res){
-  var author = req.body.abuse.author;
-  var txt = req.body.abuse.text;
-  var id =  req.body.abuse.id;
-  var body = "Auteur: " + author + "\nTexte: " + txt + "\nId élément: " + id;
-  var url = "http://mon.instant-de-bonheur.fr/" 
-  if (id != "index" && id != "liste_page1") {
-    url = url + "bonheur/" + id +"/show";
+  if(req.body.abuse.captcha==null || req.body.abuse.captcha != '10') {
+    req.flash('error', 'Damned couscous! Pour signaler un contenu offensant, il faut d\'abord remplir tous les champs!');
+    res.redirect('back');
+  } else {
+    var author = req.body.abuse.author;
+    var txt = req.body.abuse.text;
+    var id =  req.body.abuse.id;
+    var body = "Auteur: " + author + "\nTexte: " + txt + "\nId élément: " + id;
+    var url = "http://mon.instant-de-bonheur.fr/" 
+    if (id != "index" && id != "liste_page1") {
+      url = url + "bonheur/" + id +"/show";
+    }
+    body = body + "\n" + url;
+  
+    var mg = new mailgun.Mailgun(process.env.mailgun_key);
+    mg.sendText(process.env.emailFrom,
+           process.env.emailTo,
+           '[instant-de-bonheur] Abuse: un contenu a été signalé comme offensant',
+           body,
+           function(err) { err && console.log(err) });
+    req.flash('success', 'Merci de nous avoir averti de ce contenu, nous allons le traiter dès que possible');
+    res.redirect('back');
   }
-  body = body + "\n" + url;
-
-  var mg = new mailgun.Mailgun(process.env.mailgun_key);
-  mg.sendText(process.env.emailFrom,
-         process.env.emailTo,
-         '[instant-de-bonheur] Abuse: un contenu a été signalé comme offensant',
-         body,
-         function(err) { err && console.log(err) });
-  req.flash('success', 'Merci de nous avoir averti de ce contenu, nous allons le traiter dès que possible');
-  res.redirect('back');
 });
 
 // ###Permet d'accéder aux pages de la documentation 
